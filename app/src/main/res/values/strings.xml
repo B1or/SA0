@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Contacts: Save As</string>
+    <string name="title_permission">Permission</string>
+    <string name="message_permission_denied">Permission to read contacts was not granted. Without this permission, the app cannot function.</string>
+    <string name="message_permission_request">Permission to read contacts is required. Without this permission, the app cannot function.</string>
+    <string name="ok">OK</string>
+    <string name="request">Request</string>
+    <string name="refuse">Refuse</string>
+    <string name="primary">Primary</string>
+    <string name="alternative">Alternative</string>
+    <string name="display">Display</string>
+    <string name="first">First</string>
+    <string name="surname">Surname</string>
+    <string name="patronymic">Patronymic</string>
+    <string name="nickname">Nickname</string>
+    <string name="note">Note</string>
+</resources>

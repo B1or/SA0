@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Контакты: Хранить как</string>
+    <string name="title_permission">Разрешение</string>
+    <string name="message_permission_denied">Разрешение на чтение контактов не было предоставлено. Без этого разрешения приложение не может работать.</string>
+    <string name="message_permission_request">Требуется разрешение на чтение контактов. Без этого разрешения приложение не может работать.</string>
+    <string name="ok">Ладно</string>
+    <string name="request">Запросить</string>
+    <string name="refuse">Отказать</string>
+    <string name="primary">Основное</string>
+    <string name="alternative">Альтернативное</string>
+    <string name="display">Отображаемое</string>
+    <string name="first">Имя</string>
+    <string name="surname">Фамилия</string>
+    <string name="patronymic">Отчество</string>
+    <string name="nickname">Прозвище</string>
+    <string name="note">Примечание</string>
+</resources>
