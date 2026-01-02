@@ -1,6 +1,5 @@
 package tech.droi.saveas
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import tech.droi.saveas.MainActivity.Companion.TAG
 
 @Composable
 fun SaveScreen(
@@ -58,8 +56,9 @@ fun ContactRow(
     viewModel: SaveViewModel,
     contactUi: ContactUi
 ) {
-    Log.d(TAG, contactUi.toString())
+    val context = LocalContext.current
     Card(
+        onClick = { viewModel.click(context, contactUi) },
         modifier = Modifier.padding(4.dp)
     ) {
         Row(

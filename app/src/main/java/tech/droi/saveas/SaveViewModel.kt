@@ -1,6 +1,9 @@
 package tech.droi.saveas
 
 import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.ContactsContract
 import androidx.lifecycle.ViewModel
@@ -147,4 +150,12 @@ class SaveViewModel @Inject constructor(
         contactDao.update(ContactRoom(contactUi.contactId!!, saveAs.value))
     }
 
+    fun click(context: Context, contactUi: ContactUi) {
+        val contactUri: Uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactUi.contactId!!)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(contactUri, ContactsContract.Contacts.CONTENT_ITEM_TYPE)
+            putExtra("finishActivityOnSaveCompleted", true)
+        }
+        context.startActivity(intent)
+    }
 }

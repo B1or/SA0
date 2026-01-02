@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
     }
 
     companion object {
-        const val TAG = "SaaS"
+//        const val TAG = "SaaS"
     }
 }
 
