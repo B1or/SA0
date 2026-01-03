@@ -12,5 +12,6 @@ data class ContactApi(
     var family: String = "",        // фамилия
     var middle: String = "",        // отчество
     var nickname: String = "",      // прозвище
-    var note: String = ""           // примечание
+    var note: String = "",          // примечание
+    var organization: String = ""   // организация
 )

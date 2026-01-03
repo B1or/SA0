@@ -10,7 +10,8 @@ enum class SaveAs(val value: Int, val resource: Int) {
     SURNAME(4, R.string.surname),
     PATRONYMIC(5, R.string.patronymic),
     NICKNAME(6, R.string.nickname),
-    NOTE(7, R.string.note);
+    NOTE(7, R.string.note),
+    ORGANIZATION(8, R.string.organization);
 
     companion object {
         fun fromInt(value: Int) = entries.first { it.value == value }

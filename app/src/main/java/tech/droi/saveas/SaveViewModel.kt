@@ -103,6 +103,21 @@ class SaveViewModel @Inject constructor(
                             contactApi.note = if (index >= 0) it.getString(index) ?: "" else ""
                         }
                     }
+                    projection = arrayOf(ContactsContract.CommonDataKinds.Organization.COMPANY)
+                    selectionArgs = arrayOf(id.toString(), ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+                    nameCursor = contentResolver.query(
+                        ContactsContract.Data.CONTENT_URI,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null
+                    )
+                    nameCursor?.use {
+                        if (it.moveToFirst()) {
+                            index = it.getColumnIndex(ContactsContract.CommonDataKinds.Organization.COMPANY)
+                            contactApi.organization = if (index >= 0) it.getString(index) ?: "" else ""
+                        }
+                    }
                     listApi.add(contactApi)
                 }
             }
@@ -134,6 +149,8 @@ class SaveViewModel @Inject constructor(
                 if (string.isNotBlank()) listRaw.add(Pair(string, SaveAs.NICKNAME))
                 string = contactApi.note.trim()
                 if (string.isNotBlank()) listRaw.add(Pair(string, SaveAs.NOTE))
+                string = contactApi.organization.trim()
+                if (string.isNotBlank()) listRaw.add(Pair(string, SaveAs.ORGANIZATION))
                 val saveAs = SaveAs.fromInt(contactDao.getContact(contactApi.id)!!.saveAs)
                 val list = arrayListOf<Pair<String, SaveAs>>()
                 list.add(listRaw.find { it.second == saveAs } ?: listRaw.find { it.second == SaveAs.PRIMARY } ?: listRaw.first())   // TODO

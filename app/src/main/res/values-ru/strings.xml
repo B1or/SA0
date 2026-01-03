@@ -15,4 +15,5 @@
     <string name="patronymic">Отчество</string>
     <string name="nickname">Прозвище</string>
     <string name="note">Примечание</string>
+    <string name="organization">Организация</string>
 </resources>
