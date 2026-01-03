@@ -175,4 +175,12 @@ class SaveViewModel @Inject constructor(
         }
         context.startActivity(intent)
     }
+
+    fun add(context: Context) {
+        val intent = Intent(Intent.ACTION_INSERT).apply {
+            setData(ContactsContract.Contacts.CONTENT_URI)
+            putExtra("finishActivityOnSaveCompleted", true)
+        }
+        context.startActivity(intent)
+    }
 }

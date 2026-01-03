@@ -38,10 +38,17 @@ import coil.request.ImageRequest
 @Composable
 fun SaveScreen(
     modifier: Modifier = Modifier,
-    viewModel: SaveViewModel = viewModel()
+    viewModel: SaveViewModel = viewModel(),
+    onSetFabAction: (() -> Unit) -> Unit
 ) {
     val list by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        onSetFabAction {
+            viewModel.add(context)
+        }
+    }
     Column(
         modifier = modifier.verticalScroll(scrollState)
     ) {
