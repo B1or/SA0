@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.core.net.toUri
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class SaveViewModel @Inject constructor(
@@ -130,7 +131,7 @@ class SaveViewModel @Inject constructor(
                 if (listApi.find { it.id == contactRoom.contactId } == null)
                     contactDao.delete(contactRoom)
             }
-            val listUi = arrayListOf<ContactUi>()
+            val list = arrayListOf<ContactUi>()
             listApi.forEach { contactApi ->
                 val listRaw = arrayListOf<Pair<String, SaveAs>>()
                 var string = contactApi.primary.trim()
@@ -152,19 +153,29 @@ class SaveViewModel @Inject constructor(
                 string = contactApi.organization.trim()
                 if (string.isNotBlank()) listRaw.add(Pair(string, SaveAs.ORGANIZATION))
                 val saveAs = SaveAs.fromInt(contactDao.getContact(contactApi.id)!!.saveAs)
-                val list = arrayListOf<Pair<String, SaveAs>>()
-                list.add(listRaw.find { it.second == saveAs } ?: listRaw.find { it.second == SaveAs.PRIMARY } ?: listRaw.first())   // TODO
+                val listPair = arrayListOf<Pair<String, SaveAs>>()
+                listPair.add(listRaw.find { it.second == saveAs } ?: listRaw.find { it.second == SaveAs.PRIMARY } ?: listRaw.first())   // TODO
                 val stringDelete = listRaw.find { it.second == saveAs }!!.first
                 listRaw.removeIf { it.first == stringDelete }
-                list.addAll(listRaw.distinctBy { it.first })
-                listUi.add(ContactUi(contactApi.id, saveAs, list, contactApi.photo))
+                listPair.addAll(listRaw.distinctBy { it.first })
+                list.add(ContactUi(contactApi.id, saveAs, listPair, contactApi.photo))
             }
-            _uiState.value = listUi
+            _uiState.value = list.sortedBy { contactUi -> contactUi.names.find { it.second == contactUi.saveAs }!!.first }
         }
     }
 
-    suspend fun sendPageSelectedEvent(contactUi: ContactUi, saveAs: SaveAs) {
-        contactDao.update(ContactRoom(contactUi.contactId!!, saveAs.value))
+    fun sort() {
+        viewModelScope.launch {
+            _uiState.update { currentList -> currentList.sortedBy { contactUi -> contactUi.names.find { it.second == contactUi.saveAs }!!.first } }
+        }
+    }
+
+    fun update(contactId: Long, saveAs: SaveAs) {
+        viewModelScope.launch {
+            contactDao.update(ContactRoom(contactId, saveAs.value))
+            val index = _uiState.value.indexOfFirst { it.contactId == contactId }
+            _uiState.value[index].saveAs = saveAs
+        }
     }
 
     fun click(context: Context, contactUi: ContactUi) {

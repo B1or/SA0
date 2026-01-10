@@ -1,16 +1,22 @@
 package tech.droi.saveas
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
@@ -34,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import tech.droi.saveas.MainActivity.Companion.TAG
 
 @Composable
 fun SaveScreen(
@@ -41,19 +48,35 @@ fun SaveScreen(
     viewModel: SaveViewModel = viewModel(),
     onSetFabAction: (() -> Unit) -> Unit
 ) {
-    val list by viewModel.uiState.collectAsState()
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+    val list by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         onSetFabAction {
             viewModel.add(context)
         }
+        val listener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent) {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+                if (x > 15f || y > 15f || z > 15f) {
+                    Log.d(TAG, "shake-up")
+                    viewModel.sort()
+                }
+            }
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+        sensorManager.registerListener(listener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
     }
-    Column(
-        modifier = modifier.verticalScroll(scrollState)
+    LazyColumn(
+        modifier = modifier
     ) {
-        list.forEach { contactUi ->
-            ContactRow(viewModel, contactUi)
+        Log.d(TAG, "change")
+        items(list, key = { it.contactId!! }) { item ->
+            Log.d(TAG, "item change")
+            ContactRow(viewModel, item)
         }
     }
 }
@@ -107,7 +130,8 @@ fun ContactRow(
             }
             LaunchedEffect(pagerState) {
                 snapshotFlow { pagerState.currentPage }.collect { page ->
-                    viewModel.sendPageSelectedEvent(contactUi, list[page].second)
+                    viewModel.update(contactUi.contactId!!, list[page].second)
+                    contactUi.saveAs = list[page].second
                 }
             }
         }
